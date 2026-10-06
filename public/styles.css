@@ -36,28 +36,34 @@ header {
 }
 
 #current-gym {
-  text-align: right;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 22px 16px 30px;
+  color: #FFF;
+  background-color: #1F1F1F;
+  border: 2px solid #333;
+  border-radius: 999px;
+  transition: all 0.3s ease;
+}
+
+#current-gym:hover {
+  border-color: #A91834;
 }
 
 #current-gym-name {
-  display: block;
-  color: #FFF;
-  font-size: 300%;
+  font-size: 220%;
   font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 2px;
 }
 
-.change {
-  display: inline-block;
-  margin-top: 8px;
-  color: #777;
-  font-size: 160%;
-  transition: color 0.3s ease;
-}
-
-.change:hover {
-  color: #CCC;
+.chevron {
+  width: 32px;
+  height: 32px;
+  fill: none;
+  stroke: #A91834;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 /* Day navigation */

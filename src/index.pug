@@ -47,7 +47,7 @@ html
         storeGym(gymId);
         section.style.display = 'block';
         document.getElementById('current-gym-name').innerText = section.getAttribute('data-name');
-        document.getElementById('current-gym').style.display = 'block';
+        document.getElementById('current-gym').style.display = '';
         document.title = 'Legacy ' + section.getAttribute('data-name') + ' Schedule';
         if (location.search && window.history.replaceState) {
           history.replaceState(null, '', location.pathname);
@@ -90,9 +90,10 @@ html
     header
       a.logo(href='./')
         img(src='images/logo-large.png' alt='Legacy Brazilian Jiu Jitsu')
-      div#current-gym(style='display:none')
+      a#current-gym(href='./' onclick='return showSelector();' title='Change academy' style='display:none')
         span#current-gym-name
-        a.change(href='./' onclick='return showSelector();') Change
+        svg.chevron(viewBox='0 0 24 24' aria-hidden='true')
+          path(d='M6 9l6 6 6-6')
 
     div#gym-select(style='display:none')
       h1 Choose your academy
