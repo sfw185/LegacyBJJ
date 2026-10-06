@@ -36,7 +36,7 @@ const groupByStartDay = (schedule) => {
   return [...schedule]
     .sort((a, b) => a.start.localeCompare(b.start))
     .reduce((aggregate, current) => {
-      const startDate = moment(current.start, CLUBWORX_FORMAT).format('dddd D MMM');
+      const startDate = moment(current.start, CLUBWORX_FORMAT).format('dddd Do MMM');
       if (!aggregate[startDate]) {
         aggregate[startDate] = [];
       }

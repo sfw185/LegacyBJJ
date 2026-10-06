@@ -93,15 +93,30 @@ nav a .letter {
 
 nav a .date {
   display: block;
-  font-size: 160%;
-  color: #888;
+  font-size: 170%;
+  font-weight: bold;
+  color: #BBB;
+}
+
+nav a .date sup {
+  font-size: 60%;
+  margin-left: 1px;
+}
+
+nav a .month {
+  display: block;
+  font-size: 120%;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #777;
 }
 
 nav a.active {
   background-color: #A91834;
 }
 
-nav a.active .date {
+nav a.active .date,
+nav a.active .month {
   color: #FFF;
 }
 
