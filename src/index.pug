@@ -34,6 +34,7 @@ html
       function showSelector() {
         hideAll();
         document.getElementById('gym-select').style.display = 'block';
+        document.getElementById('current-gym').style.display = 'none';
         document.title = 'Legacy BJJ Schedule';
         return false;
       }
@@ -45,6 +46,8 @@ html
         hideAll();
         storeGym(gymId);
         section.style.display = 'block';
+        document.getElementById('current-gym-name').innerText = section.getAttribute('data-name');
+        document.getElementById('current-gym').style.display = 'block';
         document.title = 'Legacy ' + section.getAttribute('data-name') + ' Schedule';
         if (location.search && window.history.replaceState) {
           history.replaceState(null, '', location.pathname);
@@ -84,8 +87,12 @@ html
         }
       }
   body(onload='init();')
-    a(href='./')
-      img(src='images/logo-large.png' alt='Legacy Brazilian Jiu Jitsu')
+    header
+      a.logo(href='./')
+        img(src='images/logo-large.png' alt='Legacy Brazilian Jiu Jitsu')
+      div#current-gym(style='display:none')
+        span#current-gym-name
+        a.change(href='./' onclick='return showSelector();') Change
 
     div#gym-select(style='display:none')
       h1 Choose your academy
@@ -104,14 +111,12 @@ html
 
     each gym in gyms.filter(gym => !gym.external)
       div.gym(id='gym-' + gym.id data-name=gym.name style='display:none')
-        div.gym-header
-          h2= gym.name
-          a.change(href='./' onclick='return showSelector();') Change academy
         if gym.data && Object.keys(gym.data).length
           nav
             each dayName, dayIndex in Object.keys(gym.data)
               a(id=gym.id + '-' + dayIndex + '-link' data-day=dayIndex data-label=dayName onclick='setScheduleDay(\'' + gym.id + '\', ' + dayIndex + ');')
-                = dayName[0]
+                span.letter= dayName[0]
+                span.date= dayName.split(' ')[1]
           h1
           each dayName, dayIndex in Object.keys(gym.data)
             div(id=gym.id + '-' + dayIndex style='display:none')
