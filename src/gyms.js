@@ -5,7 +5,7 @@ const gyms = [
   { id: 'sydneyhq', name: 'Sydney HQ', suburb: 'Chippendale', region: 'NSW', clubworx: 'legacy-jiu-jitsu' },
   { id: 'brookvale', name: 'Brookvale', region: 'NSW', clubworx: 'warrior-training-academy' },
   { id: 'chatswood', name: 'Chatswood', region: 'NSW', clubworx: 'legacy-bjj-willoughby-pty-ltd' },
-  { id: 'hornsby', name: 'Hornsby', region: 'NSW' },
+  { id: 'hornsby', name: 'Hornsby', region: 'NSW', clubworx: 'carioti-mma' },
   { id: 'parramatta', name: 'Parramatta', suburb: 'Rydalmere', region: 'NSW', clubworx: 'legacy-bjj-parramatta' },
   { id: 'corrimal', name: 'Corrimal', region: 'NSW', clubworx: 'legacy-bjj-wollongong' },
   { id: 'dapto', name: 'Dapto', region: 'NSW', clubworx: 'legacy-bjj-dapto' },
