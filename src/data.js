@@ -73,22 +73,16 @@ const getScheduleData = async (gym) => {
 // Fetch every gym's schedule. A failing gym renders as unavailable rather than
 // breaking the whole site, but if every gym fails the build fails.
 const getAllScheduleData = async (gyms) => {
-  const clubworxGyms = gyms.filter(gym => gym.clubworx);
-  const results = await Promise.allSettled(clubworxGyms.map(getScheduleData));
+  const results = await Promise.allSettled(gyms.map(getScheduleData));
 
   if (results.every(result => result.status === 'rejected')) {
     throw new Error('Failed to fetch schedule data for every gym');
   }
 
-  return gyms.map(gym => {
-    const index = clubworxGyms.indexOf(gym);
-    const result = results[index];
-    return {
-      ...gym,
-      external: !gym.clubworx,
-      data: result && result.status === 'fulfilled' ? result.value : null,
-    };
-  });
+  return gyms.map((gym, index) => ({
+    ...gym,
+    data: results[index].status === 'fulfilled' ? results[index].value : null,
+  }));
 };
 
 // Function to slice an object based on start index and count

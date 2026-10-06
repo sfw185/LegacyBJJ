@@ -31,7 +31,7 @@ const build = async () => {
       sizes[`embed/${gym.id}`] = embed.length;
     }
 
-    const unavailable = scheduleData.filter(gym => !gym.external && !gym.data).map(gym => gym.name);
+    const unavailable = scheduleData.filter(gym => !gym.data).map(gym => gym.name);
     if (unavailable.length) {
       console.warn(`Schedule unavailable for: ${unavailable.join(', ')}`);
     }

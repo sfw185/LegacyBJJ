@@ -27,6 +27,5 @@ GitHub Actions rebuilds and deploys to GitHub Pages on every push to `main` and 
 | `peregian` | Peregian Beach | `legacy-bjj-peregian` |
 | `hobart` | Hobart | `legacy-bjj-hobart` |
 | `hornsby` | Hornsby | `carioti-mma` |
-| `midcoast` | Midcoast (Diamond Beach) | none (links to its timetable page) |
 
 To add an academy, add an entry to `src/gyms.js`. Its Clubworx slug is the part after `/websites/` in any of its Clubworx links (sign-up waivers, booking pages, etc.).

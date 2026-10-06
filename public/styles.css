@@ -205,14 +205,3 @@ p.unavailable a {
 .gym-option:active small {
   color: #FFF;
 }
-
-.gym-option.external {
-  color: #AAA;
-  background-color: transparent;
-  border: 2px solid #333;
-  border-left: 10px solid #333;
-}
-
-.gym-option.external small {
-  color: #777;
-}

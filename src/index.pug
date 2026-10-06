@@ -100,17 +100,12 @@ html
       each region in regions
         h2= region
         each gym in gyms.filter(gym => gym.region === region)
-          if gym.external
-            a.gym-option.external(href=gym.url target='_blank' rel='noopener')
-              = gym.name + ' ↗'
-              small Timetable on legacybjj.com.au
-          else
-            a.gym-option(href='?gym=' + gym.id onclick='return showGym(\'' + gym.id + '\');')
-              = gym.name
-              if gym.suburb
-                small= gym.suburb
+          a.gym-option(href='?gym=' + gym.id onclick='return showGym(\'' + gym.id + '\');')
+            = gym.name
+            if gym.suburb
+              small= gym.suburb
 
-    each gym in gyms.filter(gym => !gym.external)
+    each gym in gyms
       div.gym(id='gym-' + gym.id data-name=gym.name style='display:none')
         if gym.data && Object.keys(gym.data).length
           nav
