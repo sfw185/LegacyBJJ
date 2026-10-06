@@ -1,0 +1,9 @@
+mixin class(someClass)
+  p(class=someClass.cancelled ? 'cancelled' : null)
+    strong
+      small= [someClass.start, someClass.end, someClass.instructors, someClass.room].filter(Boolean).join(' - ')
+    br
+    strong
+      em= someClass.cancelled ? someClass.title + ' (Cancelled)' : someClass.title
+    br
+    small= someClass.description

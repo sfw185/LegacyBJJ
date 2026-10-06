@@ -1,0 +1,124 @@
+include class.pug
+
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    title Legacy BJJ Schedule
+    meta(name='theme-color' content='#141414')
+    link(rel='manifest', href='manifest.json')
+    link(rel='icon' type='image/png' href='favicon.png')
+    link(rel='apple-touch-icon' href='images/icons/icon-512x512.png')
+    link(rel='apple-touch-icon' sizes='152x152' href='images/icons/icon-152x152.png')
+    link(rel='apple-touch-icon' sizes='180x180' href='images/icons/icon-180x180.png')
+    link(rel='apple-touch-icon' sizes='167x167' href='images/icons/icon-167x167.png')
+    link(rel='stylesheet' href='styles.css')
+    script.
+      var GYM_KEY = 'legacy-gym';
+
+      function getStoredGym() {
+        try { return localStorage.getItem(GYM_KEY); } catch (e) { return null; }
+      }
+
+      function storeGym(gymId) {
+        try { localStorage.setItem(GYM_KEY, gymId); } catch (e) {}
+      }
+
+      function hideAll() {
+        var sections = document.querySelectorAll('.gym, #gym-select');
+        for (var i = 0; i < sections.length; i++) {
+          sections[i].style.display = 'none';
+        }
+      }
+
+      function showSelector() {
+        hideAll();
+        document.getElementById('gym-select').style.display = 'block';
+        document.title = 'Legacy BJJ Schedule';
+        return false;
+      }
+
+      function showGym(gymId) {
+        var section = document.getElementById('gym-' + gymId);
+        if (!section) return showSelector();
+
+        hideAll();
+        storeGym(gymId);
+        section.style.display = 'block';
+        document.title = 'Legacy ' + section.getAttribute('data-name') + ' Schedule';
+        if (location.search && window.history.replaceState) {
+          history.replaceState(null, '', location.pathname);
+        }
+
+        var firstLink = section.querySelector('nav a');
+        if (firstLink) setScheduleDay(gymId, firstLink.getAttribute('data-day'));
+        return false;
+      }
+
+      function setScheduleDay(gymId, dayIndex) {
+        var section = document.getElementById('gym-' + gymId);
+        var tags = section.getElementsByTagName('nav')[0].getElementsByTagName('a');
+        for (var i = 0; i < tags.length; i++) {
+          var tag = tags[i];
+          var day = tag.getAttribute('data-day');
+          var div = document.getElementById(gymId + '-' + day);
+
+          if (day == dayIndex) {
+            tag.className = 'active';
+            section.getElementsByTagName('h1')[0].innerText = tag.getAttribute('data-label');
+            div.style.display = 'block';
+          } else {
+            tag.className = '';
+            div.style.display = 'none';
+          }
+        }
+      }
+
+      function init() {
+        var match = /[?&]gym=([^&]+)/.exec(location.search);
+        var gymId = match ? decodeURIComponent(match[1]) : getStoredGym();
+        if (gymId) {
+          showGym(gymId);
+        } else {
+          showSelector();
+        }
+      }
+  body(onload='init();')
+    a(href='./')
+      img(src='images/logo-large.png' alt='Legacy Brazilian Jiu Jitsu')
+
+    div#gym-select(style='display:none')
+      h1 Choose your academy
+      each region in regions
+        h2= region
+        each gym in gyms.filter(gym => gym.region === region)
+          if gym.external
+            a.gym-option.external(href=gym.url target='_blank' rel='noopener')
+              = gym.name + ' ↗'
+              small Timetable on legacybjj.com.au
+          else
+            a.gym-option(href='?gym=' + gym.id onclick='return showGym(\'' + gym.id + '\');')
+              = gym.name
+              if gym.suburb
+                small= gym.suburb
+
+    each gym in gyms.filter(gym => !gym.external)
+      div.gym(id='gym-' + gym.id data-name=gym.name style='display:none')
+        div.gym-header
+          h2= gym.name
+          a.change(href='./' onclick='return showSelector();') Change academy
+        if gym.data && Object.keys(gym.data).length
+          nav
+            each dayName, dayIndex in Object.keys(gym.data)
+              a(id=gym.id + '-' + dayIndex + '-link' data-day=dayIndex data-label=dayName onclick='setScheduleDay(\'' + gym.id + '\', ' + dayIndex + ');')
+                = dayName[0]
+          h1
+          each dayName, dayIndex in Object.keys(gym.data)
+            div(id=gym.id + '-' + dayIndex style='display:none')
+              for someClass in gym.data[dayName]
+                +class(someClass)
+        else
+          p.unavailable
+            | Schedule unavailable right now.
+            br
+            a(href=gym.url target='_blank' rel='noopener') View on legacybjj.com.au

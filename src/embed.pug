@@ -1,0 +1,7 @@
+include class.pug
+
+for schedule, dayName in data
+  div(id=dayName.toLowerCase().replace(/ /g, '-'))
+    h1= dayName
+    for someClass in schedule
+      +class(someClass)

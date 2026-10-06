@@ -1,0 +1,14 @@
+{
+  "name": "legacybjj",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "node scripts/build.js"
+  },
+  "dependencies": {
+    "axios": "^1.13.5",
+    "moment-timezone": "^0.5.31",
+    "pug": "^3.0.0"
+  }
+}

@@ -1,0 +1,10 @@
+node_modules
+*.zip
+.DS_Store
+/public/*.html
+/public/embed
+.env
+.env.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
