@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '0 18 * * *' # 4 AM AEST
+    - cron: '17 18 * * *' # 4:17 AM AEST / 5:17 AM AEDT (off the hour to avoid dropped runs)
 
 permissions:
   contents: read
