@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: '17 18 * * *' # 4:17 AM AEST / 5:17 AM AEDT (off the hour to avoid dropped runs)
+    - cron: '17 */4 * * *' # every 4h, off the hour; GitHub cron runs late/drops runs, so overlap covers gaps
 
 permissions:
   contents: read
