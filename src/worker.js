@@ -28,10 +28,25 @@ const withoutPastDays = (classes) => {
   return classes.filter(someClass => someClass.start.slice(0, 10) >= today);
 };
 
-const clubworxFetcher = (ctx) => async (gym, url) => {
+// Visitor headers passed through to Clubworx. Cookies, auth and IP headers are
+// deliberately not forwarded: Clubworx doesn't need them, and the response is
+// cached and shared between visitors.
+const FORWARDED_HEADERS = ['User-Agent', 'Accept-Language'];
+const FALLBACK_USER_AGENT = 'LegacyBJJSchedule/1.0 (+https://legacy.australian.software/)';
+
+const upstreamHeaders = (request) => {
+  const headers = { Accept: 'application/json', 'User-Agent': FALLBACK_USER_AGENT };
+  for (const name of FORWARDED_HEADERS) {
+    const value = request.headers.get(name);
+    if (value) headers[name] = value;
+  }
+  return headers;
+};
+
+const clubworxFetcher = (request, ctx) => async (gym, url) => {
   try {
     const response = await fetch(url, {
-      headers: { Accept: 'application/json' },
+      headers: upstreamHeaders(request),
       cf: { cacheTtl: PAGE_TTL, cacheEverything: true },
       signal: AbortSignal.timeout(CLUBWORX_TIMEOUT_MS),
     });
@@ -59,8 +74,8 @@ const route = (pathname) => {
   return null;
 };
 
-const render = async (page, ctx) => {
-  const fetchSchedule = clubworxFetcher(ctx);
+const render = async (page, request, ctx) => {
+  const fetchSchedule = clubworxFetcher(request, ctx);
   if (page.type === 'index') {
     return renderIndex(await getAllScheduleData(gyms, fetchSchedule));
   }
@@ -87,7 +102,7 @@ export default {
     if (cached) return cached;
 
     try {
-      const response = new Response(await render(page, ctx), { headers: HTML_HEADERS });
+      const response = new Response(await render(page, request, ctx), { headers: HTML_HEADERS });
       ctx.waitUntil(caches.default.put(cacheKey, response.clone()));
       return response;
     } catch (error) {
