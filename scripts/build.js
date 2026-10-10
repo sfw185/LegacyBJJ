@@ -1,14 +1,9 @@
-const pug = require('pug');
 const { promises: { writeFile, mkdir } } = require('fs');
 const path = require('path');
 
 const { gyms } = require('../src/gyms');
-const { getAllScheduleData, sliceObject } = require('../src/data');
-
-const indexTemplate = pug.compileFile('./src/index.pug');
-const embedTemplate = pug.compileFile('./src/embed.pug');
-
-const regions = ['NSW', 'QLD', 'TAS'];
+const { getAllScheduleData } = require('../src/data');
+const { renderIndex, renderEmbed } = require('../src/render');
 
 const build = async () => {
   try {
@@ -19,14 +14,13 @@ const build = async () => {
     const scheduleData = await getAllScheduleData(gyms);
 
     console.log('Building index.html...');
-    const oneWeek = scheduleData.map(gym => ({ ...gym, data: gym.data && sliceObject(gym.data, 0, 7) }));
-    const index = indexTemplate({ gyms: oneWeek, regions, pretty: true });
+    const index = renderIndex(scheduleData);
     await writeFile(path.join('./public', 'index.html'), index, 'utf8');
 
     const sizes = { index: index.length };
     for (const gym of scheduleData.filter(gym => gym.data)) {
       console.log(`Building embed/${gym.id}.html...`);
-      const embed = embedTemplate({ data: gym.data, pretty: true });
+      const embed = renderEmbed(gym.data);
       await writeFile(path.join('./public/embed', `${gym.id}.html`), embed, 'utf8');
       sizes[`embed/${gym.id}`] = embed.length;
     }

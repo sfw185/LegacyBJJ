@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "node scripts/build.js",
-    "dev": "node scripts/build.js"
+    "templates": "node scripts/compile-templates.js",
+    "build": "npm run templates && node scripts/build.js",
+    "dev": "npm run build",
+    "worker:dev": "npm run templates && wrangler dev",
+    "worker:deploy": "npm run templates && wrangler deploy"
   },
   "dependencies": {
-    "axios": "^1.13.5",
     "moment-timezone": "^0.5.31",
     "pug": "^3.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.149.0"
   }
 }
