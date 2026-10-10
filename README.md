@@ -6,12 +6,21 @@ On first visit you pick your academy; the choice is remembered in `localStorage`
 
 ## How it works
 
-`npm run build` fetches 14 days of classes for each academy in `src/gyms.js` and renders static HTML into `public/`:
+The site is served at **https://legacy.australian.software/** by a Cloudflare Worker (`src/worker.js`). On each request it fetches 14 days of classes for each academy in `src/gyms.js` from Clubworx and renders:
 
-- `index.html`: the app (selector plus a one-week schedule per academy)
-- `embed/<id>.html`: a two-week schedule fragment per academy (see [embed.md](embed.md))
+- `/`: the app (selector plus a one-week schedule per academy)
+- `/embed/<id>.html`: a two-week schedule fragment per academy (see [embed.md](embed.md))
 
-GitHub Actions rebuilds and deploys to GitHub Pages on every push to `main` and daily at 4 AM AEST.
+Clubworx responses and rendered pages are cached at the edge for 60 seconds, so schedules are at most about a minute old. If Clubworx is down, the Worker serves the last good copy of each academy's schedule (kept for up to 7 days). CSS, images and the manifest are served from `public/`.
+
+The Pug templates are precompiled to `src/templates.generated.js` (`npm run templates`) because Workers can't compile them at runtime.
+
+- `npm run worker:dev`: run the Worker locally
+- `npm run worker:deploy`: deploy by hand (normally done by GitHub Actions on every push to `main`; needs the `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` repo secrets)
+
+### Static fallback
+
+`npm run build` renders the same pages as static HTML into `public/`. GitHub Actions deploys that to GitHub Pages (https://sfw185.github.io/LegacyBJJ/) on every push to `main` and roughly every 4 hours, as a backup.
 
 ## Academies
 

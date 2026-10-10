@@ -1,6 +1,6 @@
 # Embedding a Legacy BJJ Schedule
 
-Each academy has an embeddable two-week schedule at `embed/<id>.html` (IDs are listed in the [README](README.md)), e.g. `https://sfw185.github.io/LegacyBJJ/embed/parramatta.html`.
+Each academy has an embeddable two-week schedule at `embed/<id>.html` (IDs are listed in the [README](README.md)), e.g. `https://legacy.australian.software/embed/parramatta.html`. These are rendered live and are at most about a minute old. (The older `https://sfw185.github.io/LegacyBJJ/embed/<id>.html` URLs still work, but only update every few hours.)
 
 To embed one into your website, use the following JavaScript function:
 
@@ -44,5 +44,5 @@ async function loadHTMLIntoDiv(divId, url) {
 
 2. Call the function after the page loads:
    ```javascript
-   loadHTMLIntoDiv('schedule', 'https://sfw185.github.io/LegacyBJJ/embed/parramatta.html');
+   loadHTMLIntoDiv('schedule', 'https://legacy.australian.software/embed/parramatta.html');
    ```

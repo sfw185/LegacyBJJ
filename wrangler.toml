@@ -1,0 +1,17 @@
+name = "legacybjj"
+main = "src/worker.js"
+compatibility_date = "2026-10-01"
+workers_dev = false
+
+routes = [
+  { pattern = "legacy.australian.software", custom_domain = true },
+]
+
+# CSS, images and manifest. The Worker runs first so it can render / and /embed/*
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = true
+
+[observability]
+enabled = true

@@ -1,0 +1,54 @@
+name: Deploy Worker
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: worker
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: cloudflare
+      url: https://legacy.australian.software/
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run templates
+
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      # Check the live site renders real Clubworx data. Retries cover a new
+      # custom domain's certificate still being issued.
+      - name: Smoke test
+        run: |
+          site=https://legacy.australian.software
+          for i in $(seq 1 12); do
+            status=$(curl -s -o index.html -w '%{http_code}' "$site/") && [ "$status" = 200 ] && break
+            echo "Attempt $i: HTTP $status"; sleep 10
+          done
+          [ "$status" = 200 ] || { echo "::error::$site/ returned HTTP $status"; exit 1; }
+          days=$(grep -o 'data-day=' index.html | wc -l)
+          unavailable=$(grep -o 'Schedule unavailable' index.html | wc -l)
+          echo "Rendered $days academy-days; $unavailable academies unavailable"
+          [ "$days" -gt 0 ] || { echo "::error::No schedule data rendered"; exit 1; }
+          [ "$unavailable" -eq 0 ] || echo "::warning::$unavailable academies have no schedule"
+          curl -sfI "$site/embed/parramatta.html" | grep -iE '^(HTTP|cache-control|access-control-allow-origin)'
+          curl -sfI "$site/styles.css" | head -1

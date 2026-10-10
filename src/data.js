@@ -1,4 +1,3 @@
-const axios = require('axios');
 const moment = require('moment-timezone');
 const { getStartTime: start, getEndTime: end } = require('./time');
 
@@ -53,17 +52,29 @@ const groupByStartDay = (schedule) => {
     }, {});
 };
 
+const scheduleUrl = (gym) =>
+  `https://app.clubworx.com/websites/${gym.clubworx}/calendar/data?start=${start()}&end=${end()}`;
+
+// Default fetcher: plain fetch, returns the raw Clubworx class array
+const fetchClubworx = async (gym, url) => {
+  const response = await fetch(url, { headers: { Accept: 'application/json' } });
+  if (!response.ok) {
+    throw new Error(`Request failed with status code ${response.status}`);
+  }
+  return response.json();
+};
+
 // Function to fetch schedule data for a single gym
-const getScheduleData = async (gym) => {
-  const scheduleUrl = `https://app.clubworx.com/websites/${gym.clubworx}/calendar/data?start=${start()}&end=${end()}`;
-  console.log(`Fetching ${gym.name} schedule from ${scheduleUrl}`);
+const getScheduleData = async (gym, fetchSchedule) => {
+  const url = scheduleUrl(gym);
+  console.log(`Fetching ${gym.name} schedule from ${url}`);
 
   try {
-    const response = await axios.get(scheduleUrl, { headers: { Accept: 'application/json' } });
-    if (!Array.isArray(response.data)) {
+    const classes = await fetchSchedule(gym, url);
+    if (!Array.isArray(classes)) {
       throw new Error('Unexpected response (not a JSON array)');
     }
-    return groupByStartDay(response.data);
+    return groupByStartDay(classes);
   } catch (error) {
     console.error(`Error fetching ${gym.name} schedule data: ${error.message}`);
     throw error;
@@ -72,8 +83,8 @@ const getScheduleData = async (gym) => {
 
 // Fetch every gym's schedule. A failing gym renders as unavailable rather than
 // breaking the whole site, but if every gym fails the build fails.
-const getAllScheduleData = async (gyms) => {
-  const results = await Promise.allSettled(gyms.map(getScheduleData));
+const getAllScheduleData = async (gyms, fetchSchedule = fetchClubworx) => {
+  const results = await Promise.allSettled(gyms.map(gym => getScheduleData(gym, fetchSchedule)));
 
   if (results.every(result => result.status === 'rejected')) {
     throw new Error('Failed to fetch schedule data for every gym');
