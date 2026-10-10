@@ -3,8 +3,7 @@ name: Deploy Worker
 on:
   workflow_dispatch:
   push:
-    # TODO: drop cloudflare-worker once merged to main
-    branches: [main, cloudflare-worker]
+    branches: [main]
 
 permissions:
   contents: read
